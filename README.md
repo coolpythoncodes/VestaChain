@@ -64,3 +64,7 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+
+<!-- TODO -->
+write test to check if when stakeholder is added, if an array of organization the stakeholder belows to gets updated
