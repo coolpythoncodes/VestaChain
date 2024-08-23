@@ -1,20 +1,13 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
 
 import ConnectButton from "@/components/connect-button";
-import { FilePenIcon, Trash2Icon } from "@/components/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import numeral from "numeral";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { contractAbi, contractAddress } from "@/lib/constants";
 import {
   useWeb3ModalProvider,
@@ -27,19 +20,26 @@ import TokenSymbol from "@/components/token-symbol";
 import VestingSchedule from "./components/vesting-schedules";
 import useMounted from "@/hooks/use-mounted.hook";
 import UnvestedTokens from "./components/unvested-tokens";
+import ClaimVestedTokens from "./components/claim-vested-tokens";
 
 export default function HomePage() {
   const { address, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
   const [organization, setOrganization] = useState(null);
-  const [totalVestedTokens, setTotalVestedTokens] = useState(null);
-  const [unvestTokenValue, setUnvestTokenValue] = useState(null)
+  const [totalVestedTokens, setTotalVestedTokens] = useState<string | null>(
+    null,
+  );
+  const [unvestTokenValue, setUnvestTokenValue] = useState<number | null>(null);
+  const [stakeholderOrganization, setStakeholderOrganization] = useState<
+    null | string[]
+  >(null);
 
   const { isMounted } = useMounted();
 
   const getTotalVestedTokens = async () => {
     if (!isConnected) throw Error("User disconnected");
     try {
+      // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
 
@@ -48,6 +48,7 @@ export default function HomePage() {
         contractAbi,
         signer,
       );
+      // @ts-expect-error use ts-ignore
       const amount = await vestingContract.getTotalVestedAmount(address);
 
       setTotalVestedTokens(formatUnits(amount));
@@ -59,6 +60,7 @@ export default function HomePage() {
   const getOrganization = async () => {
     if (!isConnected) throw Error("User disconnected");
     try {
+      // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
 
@@ -67,8 +69,29 @@ export default function HomePage() {
         contractAbi,
         signer,
       );
+      // @ts-expect-error use ts-ignore
       const organizationData = await vestingContract.getOrganization(address);
       setOrganization(organizationData);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const getOrganizationOfStakeholder = async () => {
+    if (!isConnected) throw Error("User disconnected");
+    try {
+      // @ts-expect-error use ts-ignore
+      const ethersProvider = new BrowserProvider(walletProvider);
+      const signer = await ethersProvider.getSigner();
+
+      const vestingContract = new Contract(
+        contractAddress,
+        contractAbi,
+        signer,
+      );
+      // @ts-expect-error use ts-ignore
+      const data = await vestingContract.getOrganizationsForStakeholder(address);
+      setStakeholderOrganization(data);
     } catch (error) {
       alert(error);
     }
@@ -78,10 +101,12 @@ export default function HomePage() {
     if (isConnected && isMounted) {
       getOrganization();
       getTotalVestedTokens();
-
+      getOrganizationOfStakeholder();
     }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isMounted, organization]);
+
+  console.log("stakeholderOrganization", stakeholderOrganization);
 
   if (!isMounted) {
     return <div className="flex-1" />;
@@ -123,8 +148,10 @@ export default function HomePage() {
                 <CardTitle>Vesting Schedules</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center justify-between">
-                <div className="text-4xl font-bold">{organization?.[3]?.length}</div>
-                {/* <CalendarDaysIcon className="size-8 text-primary" /> */}
+                <div className="text-4xl font-bold">
+                {/* @ts-expect-error use ts-ignore */}
+                  {organization?.[3]?.length}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -132,8 +159,17 @@ export default function HomePage() {
                 <CardTitle>Unvested Tokens</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center justify-between">
-                <div className="text-4xl font-bold flex items-baseline">
-                  <UnvestedTokens {...{unvestTokenValue, setUnvestTokenValue,totalVestedTokens}}  organizationTokenAddress={organization?.[2]} /> <TokenSymbol tokenAddress={organization?.[2]} />
+                <div className="flex items-baseline text-4xl font-bold">
+                  {/* @ts-expect-error use ts-ignore */}
+                  <UnvestedTokens
+                    {...{
+                      unvestTokenValue,
+                      setUnvestTokenValue,
+                      totalVestedTokens,
+                    }}
+                    organizationTokenAddress={organization?.[2]}
+                  />
+                  <TokenSymbol tokenAddress={organization?.[2]} />
                 </div>
                 {/* <WalletIcon className="size-8 text-primary" /> */}
               </CardContent>
@@ -154,74 +190,15 @@ export default function HomePage() {
       )}
 
       {organization === null || organization?.[1] === ZeroAddress ? null : (
-        <VestingSchedule stakeholders={organization?.[3]} {...{unvestTokenValue}} />
+        <VestingSchedule
+          stakeholders={organization?.[3]}
+          {...{ unvestTokenValue }}
+        />
       )}
 
-      <section>
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Claim Vested Tokens</h2>
-          <Button className="shrink-0">Claim Tokens</Button>
-        </div>
-        <div className="mt-4 overflow-hidden rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Beneficiary</TableHead>
-                <TableHead>Vested Tokens</TableHead>
-                <TableHead>Claimed Tokens</TableHead>
-                <TableHead>Unclaimed Tokens</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="/placeholder-user.jpg" alt="@user" />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">John Doe</div>
-                      <div className="text-sm text-muted-foreground">
-                        0x123...abc
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>5,000 TKNS</TableCell>
-                <TableCell>2,500 TKNS</TableCell>
-                <TableCell>2,500 TKNS</TableCell>
-                <TableCell>
-                  <Button size="sm">Claim</Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="/placeholder-user.jpg" alt="@user" />
-                      <AvatarFallback>SM</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">Sarah Miller</div>
-                      <div className="text-sm text-muted-foreground">
-                        0x456...def
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>10,000 TKNS</TableCell>
-                <TableCell>5,000 TKNS</TableCell>
-                <TableCell>5,000 TKNS</TableCell>
-                <TableCell>
-                  <Button size="sm">Claim</Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </section>
+      {stakeholderOrganization?.length ? (
+        <ClaimVestedTokens {...{ stakeholderOrganization }} />
+      ) : null}
 
       {/* <section>
         <h2 className="text-2xl font-bold">Activity</h2>

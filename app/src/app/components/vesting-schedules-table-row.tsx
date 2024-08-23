@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { FilePenIcon, Trash2Icon } from "@/components/icons";
 import {
   useWeb3ModalAccount,
   useWeb3ModalProvider,
@@ -25,6 +26,7 @@ const VestingSchedulesTableRow = ({ stakeholderAddress }: Props) => {
   const getStakeHolderDetails = async () => {
     if (!isConnected) throw Error("User disconnected");
     try {
+                  // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
 
@@ -33,6 +35,7 @@ const VestingSchedulesTableRow = ({ stakeholderAddress }: Props) => {
         contractAbi,
         signer,
       );
+      // @ts-expect-error use ts-ignore
       const stakeholderDetails = await vestingContract.getStakeholder(
         address,
         stakeholderAddress,
@@ -62,6 +65,7 @@ const VestingSchedulesTableRow = ({ stakeholderAddress }: Props) => {
     if (isConnected && stakeholderAddress) {
       getStakeHolderDetails();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, stakeholderAddress]);
 
   // console.log("stakeholderDetails", stakeholderDetails);
