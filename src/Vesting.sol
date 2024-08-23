@@ -12,6 +12,7 @@ contract Vesting {
         string organizationName;
         address owner;
         Token token;
+        address[] stakeholders;
     }
 
     struct StakeHolder {
@@ -20,6 +21,7 @@ contract Vesting {
         uint256 startTime;
         bool claimed;
         address stakeholder;
+        Token organizationTokenAddress;
     }
 
     mapping(address organizationOWnerAddress => Organization) private s_organizations;
@@ -52,6 +54,7 @@ contract Vesting {
     error Vesting__CallerIsNotOrganizationOwner(address callerAddress);
     error Vesting__InsufficientTokenBalanceToVest();
     error Vesting__InsufficientUnVestedTokens();
+    error Vesting__StakeholderAlreadyAdded();
 
     /**
      * @notice Registers a new organization and creates a token for it.
@@ -66,7 +69,9 @@ contract Vesting {
         string calldata tokenSymbol,
         uint256 intialSupply
     ) external {
-        if (s_organizations[msg.sender].owner != address(0)) revert Vesting__OrganizationExits();
+        if (s_organizations[msg.sender].owner != address(0)) {
+            revert Vesting__OrganizationExits();
+        }
 
         if (intialSupply <= 0) revert Vesting__InitialTokenSupplyIsLow();
 
@@ -74,8 +79,9 @@ contract Vesting {
 
         // token.transferFrom(msg.sender, address(this), intialSupply);
 
-        s_organizations[msg.sender] =
-            Organization({organizationName: _organizationName, owner: msg.sender, token: token});
+        s_organizations[msg.sender].organizationName = _organizationName;
+        s_organizations[msg.sender].owner = msg.sender;
+        s_organizations[msg.sender].token = token;
         totalVestedAmount[msg.sender] = 0;
 
         emit OrganizationRegistered(_organizationName, msg.sender);
@@ -104,19 +110,29 @@ contract Vesting {
             revert Vesting__InsufficientTokenBalanceToVest();
         }
 
-        if (s_organizations[msg.sender].owner == address(0)) revert Vesting__OrganizationDoesNotExits();
+        if (s_organizations[msg.sender].owner == address(0)) {
+            revert Vesting__OrganizationDoesNotExits();
+        }
 
         if (s_organizations[msg.sender].owner != msg.sender) {
             revert Vesting__OnlyOrganizationOwner(msg.sender);
         }
 
         address organizationOwner = s_organizations[msg.sender].owner;
+
+        if (s_organizationStakeHolder[organizationOwner][_stakeHolder].stakeholder == _stakeHolder) {
+            revert Vesting__StakeholderAlreadyAdded();
+        }
+
+        Token organizationTokenAddress = s_organizations[msg.sender].token;
+        s_organizations[msg.sender].stakeholders.push(_stakeHolder);
         s_organizationStakeHolder[organizationOwner][_stakeHolder] = StakeHolder({
             vestingPeriod: _vestingPeriod,
             amount: _amount,
             startTime: block.timestamp,
             claimed: false,
-            stakeholder: _stakeHolder
+            stakeholder: _stakeHolder,
+            organizationTokenAddress: organizationTokenAddress
         });
 
         s_stakeholderOrganizations[_stakeHolder].push(organizationOwner);
@@ -129,9 +145,15 @@ contract Vesting {
         StakeHolder storage stakeholder = s_organizationStakeHolder[organizationOwnerAddress][msg.sender];
         if (stakeholder.claimed) revert Vesting__VestedTokensAlreadyClaimed();
 
-        if (block.timestamp < stakeholder.vestingPeriod + stakeholder.startTime) revert Vesting__VestPeriodNotOver();
+        if (block.timestamp < stakeholder.vestingPeriod + stakeholder.startTime) {
+            revert Vesting__VestPeriodNotOver();
+        }
 
-        if (stakeholder.stakeholder != msg.sender) revert Vesting__CallerIsNotStakeholder(msg.sender);
+        if (stakeholder.stakeholder != msg.sender) {
+            revert Vesting__CallerIsNotStakeholder(msg.sender);
+        }
+
+        totalVestedAmount[organizationOwnerAddress] = totalVestedAmount[organizationOwnerAddress] - stakeholder.amount;
 
         Organization memory organization = s_organizations[organizationOwnerAddress];
 
@@ -143,7 +165,9 @@ contract Vesting {
 
     function WithdrawUnVestedTokens() external {
         Organization memory organization = s_organizations[msg.sender];
-        if (organization.owner != msg.sender) revert Vesting__CallerIsNotOrganizationOwner(msg.sender);
+        if (organization.owner != msg.sender) {
+            revert Vesting__CallerIsNotOrganizationOwner(msg.sender);
+        }
         if (organization.token.balanceOf(address(this)) <= totalVestedAmount[msg.sender]) {
             revert Vesting__InsufficientUnVestedTokens();
         }
