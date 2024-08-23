@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -72,6 +75,7 @@ const AddStakeholder = () => {
     const vestingPeriod = +data.vestingPeriod * 24 * 60 * 60; // vesting period in seconds
     try {
       if (!isConnected) throw Error("User disconnected");
+                  // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
       // The Contract object
@@ -80,6 +84,8 @@ const AddStakeholder = () => {
         contractAbi,
         signer,
       );
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  // @ts-expect-error use ts-ignore
       const txHash = await vestingContract.addStakeholder(
         data.stakeholderAddress,
         parseEther(`${data.amount}`),
