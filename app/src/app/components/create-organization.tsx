@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -59,6 +62,7 @@ const CreateOrganization = () => {
 
     try {
       if (!isConnected) throw Error("User disconnected");
+                  // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
       // The Contract object
@@ -67,6 +71,7 @@ const CreateOrganization = () => {
         contractAbi,
         signer,
       );
+                  // @ts-expect-error use ts-ignore
       const txHash = await vestingContract.register(
         data.organizationName,
         data.tokenName,
@@ -82,7 +87,7 @@ const CreateOrganization = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      alert("Some this went wrong");
+      alert(error);
     }
   };
 

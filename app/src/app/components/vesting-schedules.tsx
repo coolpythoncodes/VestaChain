@@ -1,30 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FilePenIcon, Trash2Icon } from "@/components/icons";
 import AddStakeholder from "./add-stakeholder";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   useWeb3ModalAccount,
   useWeb3ModalProvider,
 } from "@web3modal/ethers/react";
 import { contractAbi, contractAddress } from "@/lib/constants";
-import { BrowserProvider, Contract, formatUnits } from "ethers";
-import numeral from "numeral";
+import { BrowserProvider, Contract } from "ethers";
 import VestingSchedulesTableRow from "./vesting-schedules-table-row";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -52,6 +49,7 @@ const VestingSchedule = ({ stakeholders, unvestTokenValue }: Props) => {
     setIsLoading(true);
     try {
       if (!isConnected) throw Error("User disconnected");
+                  // @ts-expect-error use ts-ignore
       const ethersProvider = new BrowserProvider(walletProvider);
       const signer = await ethersProvider.getSigner();
       // The Contract object
@@ -60,6 +58,7 @@ const VestingSchedule = ({ stakeholders, unvestTokenValue }: Props) => {
         contractAbi,
         signer,
       );
+                  // @ts-expect-error use ts-ignore
       const txHash = await vestingContract.WithdrawUnVestedTokens()
       const receipt = await txHash.wait();
       if (receipt) {

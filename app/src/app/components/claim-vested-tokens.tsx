@@ -1,12 +1,10 @@
 import {
     Table,
     TableBody,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import ClaimVestedTokensTableRow from "./claim-vested-tokens-table-row";
 
 
@@ -16,26 +14,7 @@ type Props = {
 
 
 const ClaimVestedTokens = ({ stakeholderOrganization }: Props) => {
-    //       const { address, isConnected } = useWeb3ModalAccount();
-    //   const { walletProvider } = useWeb3ModalProvider();
 
-    //   const getOrganizationOfStakeholder = async () => {
-    //     if (!isConnected) throw Error("User disconnected");
-    //     try {
-    //       const ethersProvider = new BrowserProvider(walletProvider);
-    //       const signer = await ethersProvider.getSigner();
-
-    //       const vestingContract = new Contract(
-    //         contractAddress,
-    //         contractAbi,
-    //         signer,
-    //       );
-    //       const organizationData = await vestingContract.getOrganization(address);
-    //       setOrganization(organizationData);
-    //     } catch (error) {
-    //       alert(error);
-    //     }
-    //   };
 
     return (
         <section>
