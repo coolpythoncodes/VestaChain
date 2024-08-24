@@ -105,7 +105,6 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
       timeZone: "UTC",
     });
     const year = date.getUTCFullYear();
-
     const formattedDate = `${day} ${month} ${year}`;
     return formattedDate;
   };
@@ -116,7 +115,7 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
     const vestingPeriod = toNumber(stakeholderDetails?.[0]);
     const totalepochTime = startPeriod + vestingPeriod;
     const currentEpochTime = Math.floor(new Date().getTime() / 1000.0);
-    if (totalepochTime <= currentEpochTime && stakeholderDetails?.[3]) {
+    if (totalepochTime <= currentEpochTime && !stakeholderDetails?.[3]) {
       return true;
     } else {
       return false;
@@ -157,7 +156,7 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, address, organization]);
-
+console.log("canClaim()",canClaim())
 
   return (
     <TableRow>
@@ -189,11 +188,12 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
           {stakeholderDetails?.[3] ? "Claimed" : "Unclaimed"}
         </Badge>
       </TableCell>
+      <TableCell>{stakeholderDetails?.[5]}</TableCell>
       <TableCell>
         <AlertDialog onOpenChange={onOpen} open={isOpen}>
           <AlertDialogTrigger asChild >
             <Button disabled={!canClaim()} size="sm" className="">
-              {canClaim() ? "Already claimed" : "Claim"}
+              {!canClaim() ? "Already claimed" : "Claim"}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>

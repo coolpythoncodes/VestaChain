@@ -69,4 +69,4 @@ Give a ⭐ if you like this project!
 
 ## Useful links
 
-- [Verified Vesting address on Sepolia etherscan](https://sepolia.etherscan.io/address/0x4771677Cc80Ef29bEc0D1DcfE6a2fef77DB45561)
+- [Verified Vesting address on Sepolia etherscan](https://sepolia.etherscan.io/address/0xd0865AF6Bec88c46Bb69697D08c8fA37900CD754)

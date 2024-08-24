@@ -17,7 +17,7 @@ const chains = {
     chainId: 11155111,
     name: "Sepolia",
     currency: "ETH",
-    explorerUrl: "https://sepolia.etherscan.io/",
+    explorerUrl: "https://sepolia.etherscan.io/address/0xd0865AF6Bec88c46Bb69697D08c8fA37900CD754",
     rpcUrl: env.NEXT_PUBLIC_RPCURL,
   }
 };

@@ -1,6 +1,6 @@
 import abi from "./vesting-abi.json";
 
-const contractAddress = "0x4771677Cc80Ef29bEc0D1DcfE6a2fef77DB45561";
+const contractAddress = "0xd0865AF6Bec88c46Bb69697D08c8fA37900CD754";
 const contractAbi = abi.abi;
 
 export { contractAddress, contractAbi };

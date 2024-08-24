@@ -172,7 +172,9 @@ contract Vesting {
             revert Vesting__InsufficientUnVestedTokens();
         }
 
-        organization.token.transfer(msg.sender, organization.token.balanceOf(address(this)));
+        organization.token.transfer(
+            msg.sender, organization.token.balanceOf(address(this)) - totalVestedAmount[msg.sender]
+        );
     }
 
     /**

@@ -27,6 +27,7 @@ const ClaimVestedTokens = ({ stakeholderOrganization }: Props) => {
                             <TableHead>Vested Tokens</TableHead>
                             <TableHead>Vesting ends</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Token address</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>

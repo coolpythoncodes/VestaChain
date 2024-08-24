@@ -106,7 +106,6 @@ export default function HomePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isMounted, organization]);
 
-  console.log("stakeholderOrganization", stakeholderOrganization);
 
   if (!isMounted) {
     return <div className="flex-1" />;
