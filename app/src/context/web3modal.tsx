@@ -13,6 +13,13 @@ const chains = {
     explorerUrl: "https://etherscan.io",
     rpcUrl: "http://127.0.0.1:8545",
   },
+  sepolia: {
+    chainId: 11155111,
+    name: "Sepolia",
+    currency: "ETH",
+    explorerUrl: "https://sepolia.etherscan.io/",
+    rpcUrl: env.NEXT_PUBLIC_RPCURL,
+  }
 };
 
 const metadata = {
@@ -30,7 +37,7 @@ const ethersConfig = defaultConfig({
 // 5. Create a AppKit instance
 createWeb3Modal({
   ethersConfig,
-  chains: [chains.anvil],
+  chains: [chains.sepolia],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
 });
@@ -38,3 +45,5 @@ createWeb3Modal({
 export const AppKit = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
+
+

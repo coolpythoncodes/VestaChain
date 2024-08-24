@@ -66,3 +66,7 @@ $ pnpm dev
 ## Show your support
 
 Give a ⭐ if you like this project!
+
+## Useful links
+
+- [Verified Vesting address on Sepolia etherscan](https://sepolia.etherscan.io/address/0x4771677Cc80Ef29bEc0D1DcfE6a2fef77DB45561)
