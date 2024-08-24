@@ -169,6 +169,8 @@ const AddStakeholder = () => {
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Add Stakeholder
           </Button>
+          <Button  disabled={isLoading} type="button" variant="destructive" onClick={onClose}>Close</Button>
+
         </form>
       </DialogContent>
     </Dialog>
