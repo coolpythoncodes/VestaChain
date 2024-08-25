@@ -77,8 +77,6 @@ contract Vesting {
 
         Token token = new Token(tokenName, tokenSymbol, intialSupply);
 
-        // token.transferFrom(msg.sender, address(this), intialSupply);
-
         s_organizations[msg.sender].organizationName = _organizationName;
         s_organizations[msg.sender].owner = msg.sender;
         s_organizations[msg.sender].token = token;

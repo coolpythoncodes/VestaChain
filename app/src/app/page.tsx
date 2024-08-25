@@ -117,7 +117,7 @@ export default function HomePage() {
   if (chainId !== envChainID) {
     return (
       <div className="grid flex-1 place-items-center gap-8 p-4 md:p-8 lg:p-12">
-        <p className="text-lg text-gray-500">Please switch to the correct network</p>
+        <p className="text-lg text-gray-500">Please kindly connect you wallet and ensure you are on the right network</p>
       </div>
     )
   }

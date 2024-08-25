@@ -200,7 +200,7 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                You are about to withdraw all unvested tokens
+                You are about to claim your vested tokens
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
