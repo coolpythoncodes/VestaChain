@@ -115,6 +115,7 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
     const vestingPeriod = toNumber(stakeholderDetails?.[0]);
     const totalepochTime = startPeriod + vestingPeriod;
     const currentEpochTime = Math.floor(new Date().getTime() / 1000.0);
+
     if (totalepochTime <= currentEpochTime && !stakeholderDetails?.[3]) {
       return true;
     } else {
@@ -138,7 +139,7 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
                   // @ts-expect-error use ts-ignore
       const txHash = await vestingContract.claimVestedTokens(address)
       const receipt = await txHash.wait();
-      if (receipt) {
+      if (receipt) {  
         router.refresh();
         setIsLoading(false);
         onClose()
@@ -156,7 +157,6 @@ const ClaimVestedTokensTableRow = ({ address }: Props) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, address, organization]);
-console.log("canClaim()",canClaim())
 
   return (
     <TableRow>
@@ -193,7 +193,7 @@ console.log("canClaim()",canClaim())
         <AlertDialog onOpenChange={onOpen} open={isOpen}>
           <AlertDialogTrigger asChild >
             <Button disabled={!canClaim()} size="sm" className="">
-              {!canClaim() ? "Already claimed" : "Claim"}
+            {canClaim() ? "Claim" : stakeholderDetails?.[3] ? "Already claimed" : "Claim"}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>

@@ -37,11 +37,13 @@ export default function RootLayout({
           fontBody.variable
         )}
       >
-        <div className="flex flex-col min-h-dvh bg-background text-foreground">
-          <Navbar />
-          <AppKit>{children}</AppKit>
-          <Footer />
-        </div>
+        <AppKit>
+          <div className="flex flex-col min-h-dvh bg-background text-foreground">
+            <Navbar />
+            {children}
+            <Footer />
+          </div>
+        </AppKit>
       </body>
     </html>
   );

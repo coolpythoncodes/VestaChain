@@ -21,9 +21,10 @@ import VestingSchedule from "./components/vesting-schedules";
 import useMounted from "@/hooks/use-mounted.hook";
 import UnvestedTokens from "./components/unvested-tokens";
 import ClaimVestedTokens from "./components/claim-vested-tokens";
+import { env } from "@/env";
 
 export default function HomePage() {
-  const { address, isConnected } = useWeb3ModalAccount();
+  const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
   const [organization, setOrganization] = useState(null);
   const [totalVestedTokens, setTotalVestedTokens] = useState<string | null>(
@@ -35,6 +36,8 @@ export default function HomePage() {
   >(null);
 
   const { isMounted } = useMounted();
+
+  const envChainID = env.NEXT_PUBLIC_ENVIRONMENT === "development" ? 31337 : 11155111
 
   const getTotalVestedTokens = async () => {
     if (!isConnected) throw Error("User disconnected");
@@ -98,20 +101,28 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if (isConnected && isMounted) {
+    if (isConnected && isMounted && chainId == envChainID) {
       getOrganization();
       getTotalVestedTokens();
       getOrganizationOfStakeholder();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, isMounted, organization]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, isMounted, envChainID,chainId]);
 
 
   if (!isMounted) {
     return <div className="flex-1" />;
   }
+
+  if (chainId !== envChainID) {
+    return (
+      <div className="grid flex-1 place-items-center gap-8 p-4 md:p-8 lg:p-12">
+        <p className="text-lg text-gray-500">Please switch to the correct network</p>
+      </div>
+    )
+  }
   return !isConnected ? (
-    <div className="error grid flex-1 place-items-center gap-8 p-4 md:p-8 lg:p-12">
+    <div className="grid flex-1 place-items-center gap-8 p-4 md:p-8 lg:p-12">
       <ConnectButton />
     </div>
   ) : (
@@ -148,7 +159,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent className="flex items-center justify-between">
                 <div className="text-4xl font-bold">
-                {/* @ts-expect-error use ts-ignore */}
+                  {/* @ts-expect-error use ts-ignore */}
                   {organization?.[3]?.length}
                 </div>
               </CardContent>

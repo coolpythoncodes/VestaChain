@@ -37,7 +37,7 @@ const ethersConfig = defaultConfig({
 // 5. Create a AppKit instance
 createWeb3Modal({
   ethersConfig,
-  chains: [chains.sepolia],
+  chains: [env.NEXT_PUBLIC_ENVIRONMENT === "development" ? chains.anvil : chains.sepolia],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
 });

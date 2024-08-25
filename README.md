@@ -44,9 +44,9 @@ Clone and Set Up the Project
 1. **Clone and Set Up the Project**
 
 ```shell bash
-$ git clone https://github.com/coolpythoncodes/VestaChain
-$ cd VestaChain
-$ make install
+git clone https://github.com/coolpythoncodes/VestaChain
+cd VestaChain
+make install
 ```
 
 2. **Update the environment variables**
@@ -54,13 +54,13 @@ $ make install
 Copy the env example files to env files
 
 ```shell
-$ cp .env.example .env
+make copy-env
 ```
 
 3. **Launch the NextJS Application**
 
 ```shell
-$ pnpm dev
+make dev
 ```
 
 ## Show your support
